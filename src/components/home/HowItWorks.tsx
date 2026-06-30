@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Upload, Database, Phone, MessageSquare, Mail, BarChart3, ArrowUpRight, FileCheck, Search,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Section, Container, Eyebrow, Button } from '../ui';
 import Reveal from '../Reveal';
 
@@ -13,21 +11,24 @@ const TABS = [
 
 const SHOWCASES = [
   {
-    visual: <ImportVisual />,
+    visual: '/dros-dashboard.jpg',
+    alt: 'DROS dashboard showing live Voice AI performance, active agents and conversations',
     heading: 'Onboard in minutes',
     body: 'Map accounts to your workflow with a CSV or a single API call. DROS syncs balances, contacts and history with no rip-and-replace.',
     href: '/collections/first-party',
     metrics: [{ v: '5 min', c: 'Average setup time' }, { v: '0', c: 'Migration projects' }],
   },
   {
-    visual: <ContactVisual />,
+    visual: '/dros-voice-agents.jpg',
+    alt: 'DROS Voice AI Platform with calls processed, handle time and resolution metrics',
     heading: 'Reach every account',
     body: 'AI agents call, text and follow up on your behalf, scripted to FDCPA and Reg F standards and logged in full for every interaction.',
     href: '/features/context-aware-voice-ai-agents-for-debt-collection',
     metrics: [{ v: '3x', c: 'Right-party contact rate' }, { v: '100%', c: 'Compliant and logged' }],
   },
   {
-    visual: <DashboardVisual />,
+    visual: '/dros-reports.jpg',
+    alt: 'DROS reports analyzing agent performance and transaction volume over time',
     heading: 'See recovery in real time',
     body: 'Track collected revenue, contact rates and compliance live, with automatic escalation to human agents the moment it is needed.',
     href: '/pricing',
@@ -104,7 +105,7 @@ export default function HowItWorks() {
                     <span className="text-lg text-ink">{TABS[i].title}</span>
                   </div>
 
-                  <FrameTilt>{s.visual}</FrameTilt>
+                  <ShowcaseFrame src={s.visual} alt={s.alt} />
 
                   <div className="mt-8 flex items-start justify-between gap-6">
                     <h3 className="font-display text-2xl text-ink md:text-[1.75rem]">{s.heading}</h3>
@@ -136,106 +137,30 @@ export default function HowItWorks() {
   );
 }
 
-/* Slight 3D tilt + top fade, echoing Lateral's framed screenshots. */
-function FrameTilt({ children }: { children: React.ReactNode }) {
+/* Lateral-style framed product shot: subtle accent glow, soft border and a
+   gentle scale-in reveal. The screenshots already carry their own device
+   perspective, so no extra tilt is applied. */
+function ShowcaseFrame({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative" style={{ perspective: '1600px' }}>
+    <div className="group relative">
+      {/* Soft accent glow that warms on hover */}
       <div
-        className="overflow-hidden rounded-xl border border-line bg-[#0A0E17] shadow-lift"
-        style={{ transform: 'rotateX(3deg)' }}
-      >
-        {children}
+        aria-hidden
+        className="pointer-events-none absolute -inset-x-6 -top-10 bottom-0 -z-10 bg-spotlight opacity-60 blur-2xl transition-opacity duration-700 group-hover:opacity-100"
+      />
+      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0A0E17] shadow-lift ring-1 ring-white/[0.03]">
+        <motion.img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="w-full"
+          initial={{ scale: 1.05, opacity: 0.6 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1.2, ease: [0.44, 0, 0.11, 1] }}
+        />
       </div>
     </div>
-  );
-}
-
-/* ── Coded DROS dashboard UIs (dark, like Lateral's product screens) ── */
-function Chrome({ children }: { children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="flex items-center gap-3 border-b border-hair px-4 py-3">
-        <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        </div>
-        <div className="flex flex-1 items-center gap-2 rounded-md border border-hair bg-base/60 px-3 py-1.5 text-xs text-ink/35">
-          <Search className="h-3 w-3" /> Search accounts, agents, reports...
-        </div>
-      </div>
-      <div className="flex">
-        <div className="hidden w-40 shrink-0 space-y-1 border-r border-hair p-3 sm:block">
-          {['Dashboard', 'Agents', 'Chat', 'Workflows', 'Reports', 'Settings'].map((it, i) => (
-            <div key={it} className={`rounded-md px-2.5 py-1.5 text-xs ${i === 4 ? 'bg-white/[0.06] text-ink' : 'text-ink/40'}`}>{it}</div>
-          ))}
-        </div>
-        <div className="flex-1 p-5">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function ImportVisual() {
-  const rows = [['ACC-10428', '$2,140.00'], ['ACC-10429', '$880.50'], ['ACC-10430', '$5,302.00']];
-  return (
-    <Chrome>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-ink/80"><Upload className="h-4 w-4 text-accent" /> portfolio_q3.csv</div>
-        <span className="flex items-center gap-1.5 text-xs text-emerald-300"><Database className="h-3.5 w-3.5" /> 4,218 mapped</span>
-      </div>
-      <div className="mt-4 space-y-2">
-        {rows.slice(0, 3).map(([id, amt]) => (
-          <div key={id} className="flex items-center justify-between rounded-lg border border-hair bg-surface/50 px-3 py-2.5 text-xs">
-            <span className="font-mono text-ink/70">{id}</span>
-            <span className="text-ink/80">{amt}</span>
-            <span className="rounded-full bg-accent/10 px-2 py-0.5 text-accent">Mapped</span>
-          </div>
-        ))}
-      </div>
-    </Chrome>
-  );
-}
-
-function ContactVisual() {
-  const ch = [
-    { icon: Phone, label: 'Voice call', detail: 'Connected - 2m 14s' },
-    { icon: MessageSquare, label: 'SMS follow-up', detail: 'Delivered' },
-    { icon: Mail, label: 'Email summary', detail: 'Opened' },
-  ];
-  return (
-    <Chrome>
-      <div className="flex items-center justify-between text-sm text-ink/80">
-        <span>Accounts Agent</span><span className="text-xs text-accent">Reg F compliant</span>
-      </div>
-      <div className="mt-4 space-y-2.5">
-        {ch.map(({ icon: Icon, label, detail }) => (
-          <div key={label} className="flex items-center gap-3 rounded-lg border border-hair bg-surface/50 px-3 py-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 text-accent"><Icon className="h-4 w-4" /></div>
-            <div className="flex-1"><div className="text-xs font-medium text-ink/80">{label}</div><div className="text-[11px] text-ink/45">{detail}</div></div>
-            <FileCheck className="h-3.5 w-3.5 text-emerald-400" />
-          </div>
-        ))}
-      </div>
-    </Chrome>
-  );
-}
-
-function DashboardVisual() {
-  return (
-    <Chrome>
-      <div className="flex items-center justify-between text-sm text-ink/80">
-        <span className="flex items-center gap-2"><BarChart3 className="h-4 w-4 text-accent" /> Recovery overview</span>
-        <span className="flex items-center gap-1 text-xs text-emerald-300"><ArrowUpRight className="h-3.5 w-3.5" /> +18.4%</span>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-lg border border-hair bg-surface/50 p-3"><div className="text-[11px] text-ink/45">Collected</div><div className="mt-1 font-display text-2xl text-ink">$842K</div></div>
-        <div className="rounded-lg border border-hair bg-surface/50 p-3"><div className="text-[11px] text-ink/45">Contact rate</div><div className="mt-1 font-display text-2xl text-ink">71%</div></div>
-      </div>
-      <div className="mt-3 flex h-16 items-end gap-1.5 rounded-lg border border-hair bg-surface/40 px-3 pb-3 pt-2">
-        {[40, 55, 48, 62, 70, 66, 82, 78, 90].map((h, i) => (<span key={i} className="flex-1 rounded-t bg-accent/60" style={{ height: `${h}%` }} />))}
-      </div>
-    </Chrome>
   );
 }
 
