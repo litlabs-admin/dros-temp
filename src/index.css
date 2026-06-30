@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Sentient (display) - self-hosted to match Lateral exactly ── */
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient/sentient-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient/sentient-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient/sentient-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Sentient';
+  src: url('/fonts/sentient/sentient-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --base: #04070F;
+  --surface: #0B1120;
+  --surface-2: #111A2E;
+  --ink: #F5F7FA;
+  --muted: rgba(255, 255, 255, 0.60);
+  --faint: rgba(255, 255, 255, 0.40);
+  --hair: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.12);
+  --accent: #03D2FC;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    font-family: 'Inter', 'Lexend', system-ui, sans-serif;
+    font-weight: 400;
+    font-feature-settings: 'cv11', 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display headings use Sentient, matching Lateral (regular weight, tight tracking) */
+  h1, h2, h3 {
+    font-family: 'Sentient', 'Times New Roman', serif;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+  }
+
+  h4, h5, h6 {
+    font-family: 'Sentient', 'Times New Roman', serif;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  small, label, caption {
+    font-weight: 400;
+  }
+
+  html {
+    -webkit-overflow-scrolling: touch;
+    /* Lenis drives smooth scroll; keep native behavior instant to avoid conflicts */
+    scroll-behavior: auto;
+  }
+
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  * {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ── Lenis smooth-scroll wiring ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@layer utilities {
+  .scroll-touch {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  /* Eyebrow / kicker label */
+  .eyebrow {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Faint dotted grid backdrop for dark sections */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Soft radial spotlight, used sparingly behind hero/CTA */
+  .bg-spotlight {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(3, 210, 252, 0.10), transparent 70%);
+  }
+}
+
+@layer utilities {
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Opt-in gradient text: ensure clipping works across browsers */
+.text-transparent.bg-clip-text {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fbbf24;
+  cursor: pointer;
+  border: 3px solid #0f172a;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fbbf24;
+  cursor: pointer;
+  border: 3px solid #0f172a;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+input[type="range"].slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 6px;
+}
+
+input[type="range"].slider::-moz-range-track {
+  height: 12px;
+  border-radius: 6px;
+}
+
+/* Respect reduced-motion: neutralize transforms/animations globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
